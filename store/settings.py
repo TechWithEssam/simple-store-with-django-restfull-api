@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'cart',
     'orders',
     'orderplease',
-    'invoices',
     'rest_framework',
     'djoser',
     'rest_framework.authtoken',
