@@ -4,8 +4,6 @@ from products.models import Product
 from orders.models import *
 # Create your models here.
 
-
-
 class CartProcessOrders(models.Model) :
     order                = models.ForeignKey(Order, on_delete=models.CASCADE)
     id_nub_product       = models.IntegerField(blank=True, null=True)
