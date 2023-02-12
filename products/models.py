@@ -61,4 +61,4 @@ class Product(models.Model) :
             new_price = self.price
         return new_price
     def __str__(self) :
-        return f"{str(self.name)} {self.new_price_after_discound}"
+        return f"{str(self.name)}"

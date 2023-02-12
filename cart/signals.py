@@ -26,9 +26,6 @@ def pre_save_change_product_status(sender, instance, **kwargs) :
             if item.id_nub_product == instance.product.id and item.order == instance.order:
                 item.quantity = instance.quantity
                 item.save()
-            if not item.id_nub_product == instance.product.id and item.order == instance.order :
-                item.orderd = True
-                item.active = False
                 
 pre_save.connect(pre_save_change_product_status, sender=Cart)
 

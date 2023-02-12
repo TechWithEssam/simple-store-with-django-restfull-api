@@ -3,8 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from .models import *
 from .serializers import *
-
-
+import requests
 
 class CategoriesApiView(generics.ListAPIView) :
     queryset = Category.objects.all()
@@ -23,7 +22,6 @@ class HomeProductView(generics.ListAPIView) :
 
     def get_queryset(self):
         request = self.request
-        print(request.user)
         obj = Product.objects.all().order_by("?")
         price_q = request.query_params.get("price")
         categories = request.query_params.get("categories")

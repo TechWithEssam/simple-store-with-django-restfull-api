@@ -15,7 +15,7 @@ class CartProcessOrders(models.Model) :
     active               = models.BooleanField(default=True)
 
     def __str__(self) :
-        return f"{str(self.product)}"
+        return f"Product name {str(self.product)} Cart ID {self.pk}"
 
     def save(self, *args, **kwargs) :
         self.total_price  =  self.product.new_price_after_discound * self.quantity
@@ -46,4 +46,4 @@ class Invoice(models.Model) :
     updated             = models.DateTimeField(auto_now=True)
     timestamp           = models.DateTimeField(auto_now_add=True)
     def __str__(self) :
-        return f"invoice {str(self.user.username)}"
+        return f"invoice Order {self.pk} for {str(self.user.username)}"

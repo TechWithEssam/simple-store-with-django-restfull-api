@@ -7,6 +7,7 @@ from .models import *
 from .serializers import *
 from .public_serializers import *
 from products.models import Product
+import requests
 # Create your views here.
 
 

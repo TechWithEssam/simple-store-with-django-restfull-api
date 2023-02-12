@@ -7,6 +7,7 @@ from .serializers import CheckOutSerializers
 from products.models import Product
 
 @api_view(["POST", "GET"])
+@permission_classes([permissions.IsAuthenticated])
 def check_out_api_view(request) :
     obj, _ = Order.objects.new_or_get(request)
     qs = obj.user.username
@@ -25,6 +26,7 @@ def check_out_api_view(request) :
         state               = serializer._validated_data.get('state')
         postal_code         = serializer._validated_data.get('postal_code')
         if cart  :
+
             order= Invoice.objects.create(
                 user=user,
                 name=name,
@@ -37,6 +39,7 @@ def check_out_api_view(request) :
                 state=state,
                 postal_code=postal_code,
                 )
+
             for item in cart :
                 if item.orderd == False :
                     order.orders.add(item)
