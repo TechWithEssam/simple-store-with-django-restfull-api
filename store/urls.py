@@ -27,6 +27,7 @@ urlpatterns = [
     path('', include("orders.urls", namespace="orders")),
     path('', include("orderplease.urls", namespace="orderplease")),
     path('', include("cart.urls", namespace="cart")),
+    path('', include("accounts.urls", namespace="accounts"))
    
 
 ]
