@@ -1,9 +1,10 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import generics,permissions, authentication, status
 from rest_framework.response import Response
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from .models import *
 from .serializers import *
-import requests
+
 
 class CategoriesApiView(generics.ListAPIView) :
     queryset = Category.objects.all()
@@ -90,3 +91,42 @@ class DeleteProductView(generics.DestroyAPIView) :
         if self.request.user == instance.salesman :
             return super().perform_destroy(instance)
 delete_product_view = DeleteProductView.as_view()
+
+
+@api_view(["POST", "GET"])
+@permission_classes([permissions.IsAuthenticatedOrReadOnly])
+def add_rate_api_view(request, slug) :
+    qs = get_object_or_404(Product, slug=slug)
+    serializer = AddRateSerializers(data=request.data)
+    if serializer.is_valid(raise_exception=True) :
+        serializer.save(user=request.user, product=qs)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["PUT", "GET"])
+@permission_classes([permissions.IsAuthenticatedOrReadOnly])
+def update_rate_user_view(request, slug, pk) :
+    product = Product.objects.get(slug=slug)
+    rate = get_object_or_404(Rate, pk=pk)
+    serializer = AddRateSerializers(data=request.data, instance=rate)
+    if serializer.is_valid(raise_exception=True) :
+        if  request.user == rate.user :
+            serializer.save()
+            return Response({"message": "your rate's editing "}, status=status.HTTP_200_OK)
+        return Response({"message" : f"hi {request.user} this rate is not for you this for {rate.user}"},status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["DELETE"])
+@permission_classes([permissions.IsAuthenticatedOrReadOnly])
+def delele_rate_api_view(request,pk) :
+    try :
+        qs = Rate.objects.get(pk=pk) 
+    except :
+        qs= None
+    if qs :
+        if request.method == "DELETE" :
+            if request.user == qs.user :
+                qs.delete()
+                return Response({"message" : "deleted is done!!!"},status=status.HTTP_200_OK)
+        return Response({"message" : "not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    return Response({"message" : "not found"}, status=status.HTTP_404_NOT_FOUND)

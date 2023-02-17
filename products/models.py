@@ -56,6 +56,7 @@ class Product(models.Model) :
     @property
     def all_rated_product(self) :
         return self.rate_set.all()
+        
     @property
     def count_reated_user(self) :
         return self.all_rated_product.count()

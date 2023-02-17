@@ -21,7 +21,10 @@ class CreateProductSerializers(serializers.ModelSerializer) :
         exclude = ["salesman", "is_available", "slug"]
 
 
+
+
 class ProductSerailizers(serializers.ModelSerializer) :
+    rate = AllRateAndCommentInLineRelated(source="all_rated_product",read_only=True, many=True)
     owner = PublicUserSerializers(read_only=True, source="salesman")
     new_product_url = serializers.SerializerMethodField(read_only=True)
     brand_name = serializers.SerializerMethodField(read_only=True)
@@ -33,6 +36,7 @@ class ProductSerailizers(serializers.ModelSerializer) :
     order_now_url = serializers.SerializerMethodField(read_only=True)
     cart_url = serializers.SerializerMethodField(read_only=True)
     add_to_cart_url = serializers.SerializerMethodField(read_only=True)
+    add_rate_url = serializers.SerializerMethodField(read_only=True)
     update_product_url = serializers.HyperlinkedIdentityField(view_name="products:update_product", lookup_field="pk")
     detail_product_url = serializers.HyperlinkedIdentityField(view_name="products:detail_product", lookup_field="slug")
     class Meta :
@@ -61,8 +65,10 @@ class ProductSerailizers(serializers.ModelSerializer) :
             "order_now_url",
             "cart_url",
             "add_to_cart_url",
+            "add_rate_url",
             "count_reated_user",
             "average_rating",
+            "rate",
         ]
     
 
@@ -71,8 +77,15 @@ class ProductSerailizers(serializers.ModelSerializer) :
     def get_cart_url(self, obj) :
         return reverse("orders:cart", request=self.context.get("request"))
     
+    def get_add_rate_url(self, obj) :
+        request = self.context.get("request")
+        if not request  :
+            return None
+        return reverse("products:add_rate", kwargs={"slug": obj.slug}, request=request)
+
     def get_add_to_cart_url(self, obj) :
         return reverse("orders:add_to_cart", request=self.context.get("request"))
+
     def get_home_url(self, obj) :
         request = self.context.get("request")
         if not request :
@@ -107,3 +120,24 @@ class ProductSerailizers(serializers.ModelSerializer) :
         
     def get_order_now_url(self, obj) :
         return reverse("orderplease:order_now", request=self.context.get("request"))
+
+
+class AddRateSerializers(serializers.ModelSerializer) :
+    update_rate_url = serializers.SerializerMethodField(read_only=True)
+    class Meta :
+        model = Rate
+        fields = (
+            "pk",
+            "comment",
+            "rate",
+            "rated_date",
+            "updated",
+            "update_rate_url"
+        )
+
+
+    def get_update_rate_url(self, obj) :
+        request = self.context.get("request")
+        if not request :
+            return None
+        return reverse("products:update_rate", kwargs={"slug":obj.product.slug, "pk":obj.pk}, request=request)
