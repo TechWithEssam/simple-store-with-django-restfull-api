@@ -32,6 +32,7 @@ class ProductSerailizers(serializers.ModelSerializer) :
     delete_product_url = serializers.SerializerMethodField(read_only=True)
     order_now_url = serializers.SerializerMethodField(read_only=True)
     cart_url = serializers.SerializerMethodField(read_only=True)
+    add_to_cart_url = serializers.SerializerMethodField(read_only=True)
     update_product_url = serializers.HyperlinkedIdentityField(view_name="products:update_product", lookup_field="pk")
     detail_product_url = serializers.HyperlinkedIdentityField(view_name="products:detail_product", lookup_field="slug")
     class Meta :
@@ -58,12 +59,20 @@ class ProductSerailizers(serializers.ModelSerializer) :
             "update_product_url",
             "delete_product_url",
             "order_now_url",
-            "cart_url"
+            "cart_url",
+            "add_to_cart_url",
+            "count_reated_user",
+            "average_rating",
         ]
     
 
+    def get_average_rating(self, obj) :
+        return obj
     def get_cart_url(self, obj) :
         return reverse("orders:cart", request=self.context.get("request"))
+    
+    def get_add_to_cart_url(self, obj) :
+        return reverse("orders:add_to_cart", request=self.context.get("request"))
     def get_home_url(self, obj) :
         request = self.context.get("request")
         if not request :

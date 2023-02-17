@@ -51,8 +51,25 @@ class Product(models.Model) :
     is_available = models.BooleanField(default=False)
     description = models.TextField()
 
+    
+
+    @property
+    def all_rated_product(self) :
+        return self.rate_set.all()
+    @property
+    def count_reated_user(self) :
+        return self.all_rated_product.count()
+
+    
+    @property
+    def average_rating(self) :
+         rates = sum([num.rate for num in self.all_rated_product])
+         if self.count_reated_user > 0 :
+            result = rates / self.count_reated_user
+            return result
+
     def __str__(self) :
-        return str(self.name)
+        return f"{str(self.name)} {self.average_rating}"
     @property
     def new_price_after_discound(self) :
         if self.discound > 0 :
@@ -60,5 +77,18 @@ class Product(models.Model) :
         else :
             new_price = self.price
         return new_price
+    
+
+
+
+class Rate(models.Model) :
+    user        = models.ForeignKey(User, on_delete=models.CASCADE)
+    product     = models.ForeignKey(Product, on_delete=models.CASCADE)
+    comment     = models.CharField(max_length=400, blank=True, null=True)
+    rate        = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
+    rated_date  = models.DateTimeField(auto_now_add=True)
+    updated     = models.DateTimeField(auto_now=True)
+
+
     def __str__(self) :
-        return f"{str(self.name)}"
+        return f"{self.product.name}-->{self.user} {self.comment} {self.rate}"
