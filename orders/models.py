@@ -64,6 +64,9 @@ class Cart(models.Model) :
         
     def save(self, *args, **kwargs) :
         self.total_price  =  self.product.new_price_after_discound * self.quantity
+        if self.quantity > self.product.inventory_quantity :
+            self.quantity =self.product.inventory_quantity
+            
         return super().save(*args, **kwargs)
     def __str__(self) :
         return f"{self.id} {self.product.name} - {self.quantity}"

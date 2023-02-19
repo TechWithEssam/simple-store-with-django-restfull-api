@@ -33,7 +33,7 @@ class ProductSerailizers(serializers.ModelSerializer) :
     categories_url = serializers.SerializerMethodField(read_only=True)
     brands_url = serializers.SerializerMethodField(read_only=True)
     delete_product_url = serializers.SerializerMethodField(read_only=True)
-    order_now_url = serializers.SerializerMethodField(read_only=True)
+    # order_now_url = serializers.SerializerMethodField(read_only=True)
     cart_url = serializers.SerializerMethodField(read_only=True)
     add_to_cart_url = serializers.SerializerMethodField(read_only=True)
     add_rate_url = serializers.SerializerMethodField(read_only=True)
@@ -62,7 +62,7 @@ class ProductSerailizers(serializers.ModelSerializer) :
             "new_product_url",
             "update_product_url",
             "delete_product_url",
-            "order_now_url",
+            # "order_now_url",
             "cart_url",
             "add_to_cart_url",
             "add_rate_url",
@@ -118,8 +118,8 @@ class ProductSerailizers(serializers.ModelSerializer) :
 
         return reverse("products:delete_product", kwargs={"pk":obj.pk}, request=self.context.get("request"))
         
-    def get_order_now_url(self, obj) :
-        return reverse("orderplease:order_now", request=self.context.get("request"))
+    # def get_order_now_url(self, obj) :
+    #     return reverse("orderplease:order_now", request=self.context.get("request"))
 
 
 class AddRateSerializers(serializers.ModelSerializer) :

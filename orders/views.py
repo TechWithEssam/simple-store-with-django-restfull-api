@@ -22,6 +22,9 @@ def cart_customer_view(request) :
                 item.quantity = product.inventory_quantity
                 if product.inventory_quantity <= 0 :
                     item.delete()
+        for item in cart :
+            if item.quantity <= 0 :
+                item.delete()
     else :
         obj, _ = Order.objects.new_or_get(request)
         obj = obj.user.username
@@ -31,6 +34,9 @@ def cart_customer_view(request) :
         if item.quantity > product.inventory_quantity:
             item.quantity = product.inventory_quantity
             if product.inventory_quantity <= 0 :
+                item.delete()
+        for item in cart :
+            if item.quantity <= 0 :
                 item.delete()
     serializer = CartsSerializers(cart, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -64,7 +70,7 @@ def action_add_to_cart_view(request) :
                         return Response({"message" : f"'{cart.product.name}' is not aavailable"})
             elif action == "remove" :
                 try :
-                    cart = Cart.objects.filter(Q(product=product) | Q(order=order))
+                    cart = Cart.objects.filter(Q(product=product) & Q(order=order))
                 except :
                     cart = None
                 print(cart)

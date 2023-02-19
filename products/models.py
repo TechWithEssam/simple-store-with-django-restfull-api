@@ -56,7 +56,7 @@ class Product(models.Model) :
     @property
     def all_rated_product(self) :
         return self.rate_set.all()
-        
+
     @property
     def count_reated_user(self) :
         return self.all_rated_product.count()
@@ -64,13 +64,13 @@ class Product(models.Model) :
     
     @property
     def average_rating(self) :
-         rates = sum([num.rate for num in self.all_rated_product])
-         if self.count_reated_user > 0 :
-            result = rates / self.count_reated_user
-            return result
+        rates = sum([num.rate for num in self.all_rated_product])
+        if self.count_reated_user > 0 :
+            result = rates / self.count_reated_user  
+        else :
+            result = 0
+        return result
 
-    def __str__(self) :
-        return f"{str(self.name)} {self.average_rating}"
     @property
     def new_price_after_discound(self) :
         if self.discound > 0 :
@@ -78,6 +78,10 @@ class Product(models.Model) :
         else :
             new_price = self.price
         return new_price
+
+    def __str__(self) :
+        return f"{str(self.name)} {self.new_price_after_discound}"
+    
     
 
 

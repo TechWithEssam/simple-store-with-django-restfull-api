@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from .models import *
 from .serializers import *
-
+import requests
 
 class CategoriesApiView(generics.ListAPIView) :
     queryset = Category.objects.all()
@@ -23,16 +23,20 @@ class HomeProductView(generics.ListAPIView) :
 
     def get_queryset(self):
         request = self.request
-        obj = Product.objects.all().order_by("?")
+        obj = Product.objects.all()
         price_q = request.query_params.get("price")
         categories = request.query_params.get("categories")
         brands = request.query_params.get("brands")
+        ordering = request.query_params.get("ordering")
         if price_q :
             obj = obj.filter(price__lte=price_q)
         if categories :
             obj = obj.filter(category__name=categories)
         if brands :
             obj = obj.filter(brand__name=brands)
+        if ordering :
+            item = ordering.split(",")
+            obj = obj.order_by(*item)
         return obj
 home_product_view = HomeProductView.as_view()
 
@@ -119,6 +123,9 @@ def update_rate_user_view(request, slug, pk) :
 @api_view(["DELETE"])
 @permission_classes([permissions.IsAuthenticatedOrReadOnly])
 def delele_rate_api_view(request,pk) :
+    url = "http://127.0.0.1:8000/"
+    items = requests.get(url)
+    print(items.content)
     try :
         qs = Rate.objects.get(pk=pk) 
     except :
